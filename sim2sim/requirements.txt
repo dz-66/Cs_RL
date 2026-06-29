@@ -1,0 +1,22 @@
+# ============================================
+# Sim2Sim 环境配置
+# 前提: 系统已安装 ROS2 Humble + conda
+# ============================================
+
+# ---- 必装: MuJoCo 仿真 ----
+mujoco>=3.1.0
+mujoco-python-viewer>=0.1.4
+
+# ---- 必装: 基础 ----
+numpy>=1.24.0
+pyyaml>=6.0
+
+# ---- 可选: ONNX 模型推理 (推荐，轻量) ----
+# onnxruntime
+
+# ---- 可选: SB3 模型推理 ----
+# stable-baselines3>=2.3.0
+# torch>=2.0.0
+
+# ---- ROS2 手柄依赖 (系统级 apt 安装) ----
+# sudo apt install ros-humble-joy ros-humble-teleop-twist-keyboard

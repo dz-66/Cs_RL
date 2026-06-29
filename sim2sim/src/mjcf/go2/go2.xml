@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mujoco model="go2_quadruped">
+  <compiler angle="radian" meshdir="meshes" autolimits="true"/>
+
+  <asset>
+    <!-- 地面纹理 -->
+    <texture name="tex_plane" type="2d" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+             width="300" height="300" mark="edge" markrgb="0.8 0.8 0.8"/>
+    <material name="mat_plane" texture="tex_plane" texrepeat="5 5" texuniform="true" reflectance="0.2"/>
+
+    <!-- 机器人材质 -->
+    <material name="mat_base" rgba="0.3 0.4 0.5 1.0"/>
+    <material name="mat_hip" rgba="0.4 0.5 0.6 1.0"/>
+    <material name="mat_thigh" rgba="0.5 0.5 0.5 1.0"/>
+    <material name="mat_calf" rgba="0.6 0.6 0.6 1.0"/>
+    <material name="mat_foot" rgba="0.3 0.3 0.3 1.0"/>
+  </asset>
+
+  <default>
+    <geom type="box" condim="3"/>
+    <joint type="hinge" limited="true" armature="0.01" damping="0.1" frictionloss="0.01"/>
+    <motor ctrlrange="-1 1"/>
+    <default class="leg">
+      <geom type="capsule" size="0.02" rgba="0.5 0.5 0.5 1"/>
+      <joint type="hinge" limited="true"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <!-- 地面 -->
+    <light name="light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2"/>
+    <geom name="floor" type="plane" pos="0 0 0" size="10 10 0.1" material="mat_plane" condim="3"/>
+
+    <!-- Go2 机器人基座 -->
+    <body name="base" pos="0 0 0.35">
+      <inertial pos="0 0 0" mass="4.0"
+                diaginertia="0.08 0.2 0.2"/>
+      <freejoint name="base_joint"/>
+
+      <!-- 基座视觉 -->
+      <geom name="base_geom" type="box" pos="0 0 0" size="0.25 0.1 0.06" material="mat_base"/>
+
+      <!-- IMU 传感器位置 -->
+      <site name="imu_site" pos="0 0 0" size="0.01"/>
+
+      <!-- ===== 前左腿 (Front Left) ===== -->
+      <body name="FL_hip" pos="0.2 0.08 0">
+        <inertial pos="0 0 0" mass="0.1" diaginertia="0.001 0.001 0.001"/>
+        <joint name="FL_hip_x" axis="1 0 0" range="-0.5 0.5"/>
+        <geom name="FL_hip_geom" type="sphere" size="0.03" material="mat_hip"/>
+
+        <body name="FL_thigh" pos="0 0 -0.085">
+          <inertial pos="0 0 -0.1" mass="0.5" diaginertia="0.002 0.002 0.002"/>
+          <joint name="FL_hip_y" axis="0 1 0" range="-1.0 1.0"/>
+          <geom name="FL_thigh_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.025" material="mat_thigh"/>
+
+          <body name="FL_calf" pos="0 0 -0.2">
+            <inertial pos="0 0 -0.1" mass="0.3" diaginertia="0.001 0.001 0.001"/>
+            <joint name="FL_knee" axis="0 1 0" range="-2.5 -0.5"/>
+            <geom name="FL_calf_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.02" material="mat_calf"/>
+
+            <body name="FL_foot" pos="0 0 -0.2">
+              <inertial pos="0 0 0" mass="0.05" diaginertia="0.0001 0.0001 0.0001"/>
+              <geom name="FL_foot_geom" type="sphere" size="0.025" material="mat_foot" priority="1"/>
+              <!-- 足端接触传感器 -->
+              <site name="FL_foot_site" pos="0 0 0" size="0.005"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ===== 前右腿 (Front Right) ===== -->
+      <body name="FR_hip" pos="0.2 -0.08 0">
+        <inertial pos="0 0 0" mass="0.1" diaginertia="0.001 0.001 0.001"/>
+        <joint name="FR_hip_x" axis="1 0 0" range="-0.5 0.5"/>
+        <geom name="FR_hip_geom" type="sphere" size="0.03" material="mat_hip"/>
+
+        <body name="FR_thigh" pos="0 0 -0.085">
+          <inertial pos="0 0 -0.1" mass="0.5" diaginertia="0.002 0.002 0.002"/>
+          <joint name="FR_hip_y" axis="0 1 0" range="-1.0 1.0"/>
+          <geom name="FR_thigh_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.025" material="mat_thigh"/>
+
+          <body name="FR_calf" pos="0 0 -0.2">
+            <inertial pos="0 0 -0.1" mass="0.3" diaginertia="0.001 0.001 0.001"/>
+            <joint name="FR_knee" axis="0 1 0" range="-2.5 -0.5"/>
+            <geom name="FR_calf_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.02" material="mat_calf"/>
+
+            <body name="FR_foot" pos="0 0 -0.2">
+              <inertial pos="0 0 0" mass="0.05" diaginertia="0.0001 0.0001 0.0001"/>
+              <geom name="FR_foot_geom" type="sphere" size="0.025" material="mat_foot" priority="1"/>
+              <site name="FR_foot_site" pos="0 0 0" size="0.005"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ===== 后左腿 (Rear Left) ===== -->
+      <body name="RL_hip" pos="-0.2 0.08 0">
+        <inertial pos="0 0 0" mass="0.1" diaginertia="0.001 0.001 0.001"/>
+        <joint name="RL_hip_x" axis="1 0 0" range="-0.5 0.5"/>
+        <geom name="RL_hip_geom" type="sphere" size="0.03" material="mat_hip"/>
+
+        <body name="RL_thigh" pos="0 0 -0.085">
+          <inertial pos="0 0 -0.1" mass="0.5" diaginertia="0.002 0.002 0.002"/>
+          <joint name="RL_hip_y" axis="0 1 0" range="-1.0 1.0"/>
+          <geom name="RL_thigh_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.025" material="mat_thigh"/>
+
+          <body name="RL_calf" pos="0 0 -0.2">
+            <inertial pos="0 0 -0.1" mass="0.3" diaginertia="0.001 0.001 0.001"/>
+            <joint name="RL_knee" axis="0 1 0" range="-2.5 -0.5"/>
+            <geom name="RL_calf_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.02" material="mat_calf"/>
+
+            <body name="RL_foot" pos="0 0 -0.2">
+              <inertial pos="0 0 0" mass="0.05" diaginertia="0.0001 0.0001 0.0001"/>
+              <geom name="RL_foot_geom" type="sphere" size="0.025" material="mat_foot" priority="1"/>
+              <site name="RL_foot_site" pos="0 0 0" size="0.005"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ===== 后右腿 (Rear Right) ===== -->
+      <body name="RR_hip" pos="-0.2 -0.08 0">
+        <inertial pos="0 0 0" mass="0.1" diaginertia="0.001 0.001 0.001"/>
+        <joint name="RR_hip_x" axis="1 0 0" range="-0.5 0.5"/>
+        <geom name="RR_hip_geom" type="sphere" size="0.03" material="mat_hip"/>
+
+        <body name="RR_thigh" pos="0 0 -0.085">
+          <inertial pos="0 0 -0.1" mass="0.5" diaginertia="0.002 0.002 0.002"/>
+          <joint name="RR_hip_y" axis="0 1 0" range="-1.0 1.0"/>
+          <geom name="RR_thigh_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.025" material="mat_thigh"/>
+
+          <body name="RR_calf" pos="0 0 -0.2">
+            <inertial pos="0 0 -0.1" mass="0.3" diaginertia="0.001 0.001 0.001"/>
+            <joint name="RR_knee" axis="0 1 0" range="-2.5 -0.5"/>
+            <geom name="RR_calf_geom" type="capsule" fromto="0 0 0 0 0 -0.2" size="0.02" material="mat_calf"/>
+
+            <body name="RR_foot" pos="0 0 -0.2">
+              <inertial pos="0 0 0" mass="0.05" diaginertia="0.0001 0.0001 0.0001"/>
+              <geom name="RR_foot_geom" type="sphere" size="0.025" material="mat_foot" priority="1"/>
+              <site name="RR_foot_site" pos="0 0 0" size="0.005"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- 执行器: 12个关节的位置执行器 -->
+  <actuator>
+    <position name="FL_hip_x_act"    joint="FL_hip_x"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="FL_hip_y_act"    joint="FL_hip_y"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="FL_knee_act"     joint="FL_knee"   kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="FR_hip_x_act"    joint="FR_hip_x"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="FR_hip_y_act"    joint="FR_hip_y"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="FR_knee_act"     joint="FR_knee"   kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="RL_hip_x_act"    joint="RL_hip_x"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="RL_hip_y_act"    joint="RL_hip_y"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="RL_knee_act"     joint="RL_knee"   kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="RR_hip_x_act"    joint="RR_hip_x"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="RR_hip_y_act"    joint="RR_hip_y"  kp="60" kd="2"  forcerange="-35 35"/>
+    <position name="RR_knee_act"     joint="RR_knee"   kp="60" kd="2"  forcerange="-35 35"/>
+  </actuator>
+
+  <!-- 传感器 -->
+  <sensor>
+    <!-- IMU: 加速度计 + 陀螺仪 -->
+    <framequat  name="imu_quat"    objtype="site" objname="imu_site"/>
+    <framelinvel name="imu_linvel" objtype="site" objname="imu_site"/>
+    <frameangvel name="imu_angvel" objtype="site" objname="imu_site"/>
+
+    <!-- 关节位置传感器 -->
+    <jointpos name="FL_hip_x_pos" joint="FL_hip_x"/>
+    <jointpos name="FL_hip_y_pos" joint="FL_hip_y"/>
+    <jointpos name="FL_knee_pos"  joint="FL_knee"/>
+    <jointpos name="FR_hip_x_pos" joint="FR_hip_x"/>
+    <jointpos name="FR_hip_y_pos" joint="FR_hip_y"/>
+    <jointpos name="FR_knee_pos"  joint="FR_knee"/>
+    <jointpos name="RL_hip_x_pos" joint="RL_hip_x"/>
+    <jointpos name="RL_hip_y_pos" joint="RL_hip_y"/>
+    <jointpos name="RL_knee_pos"  joint="RL_knee"/>
+    <jointpos name="RR_hip_x_pos" joint="RR_hip_x"/>
+    <jointpos name="RR_hip_y_pos" joint="RR_hip_y"/>
+    <jointpos name="RR_knee_pos"  joint="RR_knee"/>
+
+    <!-- 关节速度传感器 -->
+    <jointvel name="FL_hip_x_vel" joint="FL_hip_x"/>
+    <jointvel name="FL_hip_y_vel" joint="FL_hip_y"/>
+    <jointvel name="FL_knee_vel"  joint="FL_knee"/>
+    <jointvel name="FR_hip_x_vel" joint="FR_hip_x"/>
+    <jointvel name="FR_hip_y_vel" joint="FR_hip_y"/>
+    <jointvel name="FR_knee_vel"  joint="FR_knee"/>
+    <jointvel name="RL_hip_x_vel" joint="RL_hip_x"/>
+    <jointvel name="RL_hip_y_vel" joint="RL_hip_y"/>
+    <jointvel name="RL_knee_vel"  joint="RL_knee"/>
+    <jointvel name="RR_hip_x_vel" joint="RR_hip_x"/>
+    <jointvel name="RR_hip_y_vel" joint="RR_hip_y"/>
+    <jointvel name="RR_knee_vel"  joint="RR_knee"/>
+
+    <!-- 足端接触力传感器 -->
+    <touch name="FL_touch" site="FL_foot_site"/>
+    <touch name="FR_touch" site="FR_foot_site"/>
+    <touch name="RL_touch" site="RL_foot_site"/>
+    <touch name="RR_touch" site="RR_foot_site"/>
+  </sensor>
+</mujoco>
