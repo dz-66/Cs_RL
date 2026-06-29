@@ -29,7 +29,7 @@ sim2sim/
 │       └── keyboard_controller.py # 键盘 → /cmd_vel (Twist)
 │
 ├── scripts/
-│   └── ros2_bringup.sh          # 一键启动
+│   └── ros2_bringup.sh          # 一键启动jijijijiji
 ├── requirements.txt
 └── README.md
 ```
@@ -91,13 +91,13 @@ pip install -r requirements.txt
 python -m src.ros2_bridge.mujoco_ros_node --standalone
 ```
 
-| 按键 | 功能 |
-|------|------|
-| `W/S` | 前进 / 后退 |
-| `A/D` | 左移 / 右转 |
-| `Q/E` | 左转 / 右转 |
-| `Space` | 停止 |
-| `Esc` | 退出 |
+| 按键      | 功能        |
+| --------- | ----------- |
+| `W/S`   | 前进 / 后退 |
+| `A/D`   | 左移 / 右转 |
+| `Q/E`   | 左转 / 右转 |
+| `Space` | 停止        |
+| `Esc`   | 退出        |
 
 ### 3. RL 模型模式
 
@@ -142,15 +142,15 @@ ROS2 模式同样支持 `--model` 加载 RL 模型。
 
 ### 观测空间 (48维)
 
-| 维度 | 含义 | 缩放 |
-|------|------|------|
-| [0:3] | 基座线速度 (世界系) | ×0.5 |
-| [3:6] | 基座角速度 | ×0.25 |
-| [6:9] | 重力方向投影 (机体系) | — |
-| [9:12] | 速度指令 `[vx, vy, vyaw]` | — |
-| [12:24] | 12 关节位置 (相对默认姿态) | — |
-| [24:36] | 12 关节速度 | ×0.05 |
-| [36:48] | 上一次动作 | — |
+| 维度    | 含义                        | 缩放   |
+| ------- | --------------------------- | ------ |
+| [0:3]   | 基座线速度 (世界系)         | ×0.5  |
+| [3:6]   | 基座角速度                  | ×0.25 |
+| [6:9]   | 重力方向投影 (机体系)       | —     |
+| [9:12]  | 速度指令 `[vx, vy, vyaw]` | —     |
+| [12:24] | 12 关节位置 (相对默认姿态)  | —     |
+| [24:36] | 12 关节速度                 | ×0.05 |
+| [36:48] | 上一次动作                  | —     |
 
 ### 动作空间 (12维)
 
@@ -195,25 +195,25 @@ robot:
 
 ## 🔧 ROS2 话题
 
-| 话题 | 类型 | 方向 | 说明 |
-|------|------|------|------|
-| `/cmd_vel` | `Twist` | 订阅 | 速度指令 `(vx, vy, vyaw)` |
-| `/joint_states` | `JointState` | 发布 | 12 关节状态 |
-| `/odom` | `Odometry` | 发布 | 基座位姿 + 速度 |
-| `/foot_contacts` | `Float32MultiArray` | 发布 | 四足触地 `[0/1]×4` |
+| 话题               | 类型                  | 方向 | 说明                        |
+| ------------------ | --------------------- | ---- | --------------------------- |
+| `/cmd_vel`       | `Twist`             | 订阅 | 速度指令 `(vx, vy, vyaw)` |
+| `/joint_states`  | `JointState`        | 发布 | 12 关节状态                 |
+| `/odom`          | `Odometry`          | 发布 | 基座位姿 + 速度             |
+| `/foot_contacts` | `Float32MultiArray` | 发布 | 四足触地 `[0/1]×4`       |
 
 ---
 
 ## 📝 依赖
 
-| 用途 | 包 |
-|------|-----|
-| 物理仿真 | `mujoco>=3.1.0` |
-| 渲染 | `mujoco-python-viewer` |
-| 基础 | `numpy`, `pyyaml` |
-| RL (SB3) | `stable-baselines3`, `torch` |
-| RL (ONNX) | `onnxruntime` |
-| 机器人中间件 | ROS2 Humble (可选) |
+| 用途         | 包                               |
+| ------------ | -------------------------------- |
+| 物理仿真     | `mujoco>=3.1.0`                |
+| 渲染         | `mujoco-python-viewer`         |
+| 基础         | `numpy`, `pyyaml`            |
+| RL (SB3)     | `stable-baselines3`, `torch` |
+| RL (ONNX)    | `onnxruntime`                  |
+| 机器人中间件 | ROS2 Humble (可选)               |
 
 ## 📜 License
 
