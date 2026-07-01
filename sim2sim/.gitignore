@@ -25,9 +25,9 @@ logs/
 *~
 
 # ROS2
-ros2_ws/build/
-ros2_ws/install/
-ros2_ws/log/
+joy_ws/build/
+joy_ws/install/
+joy_ws/log/
 
 # Jupyter
 .ipynb_checkpoints/

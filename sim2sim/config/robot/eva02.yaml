@@ -1,0 +1,56 @@
+gait:
+  duty_factor: 0.6
+  frequency: 1.5
+  step_height: 0.08
+  type: trot
+  velocity_scale:
+    angular_z: 1.0
+    linear_x: 0.5
+    linear_y: 0.3
+robot:
+  body:
+    base_height: 0.4
+    base_mass: 2.03
+    mass: 12.621
+  default_pose:
+    FL_calf: -1.6
+    FL_hip: 0.0
+    FL_thigh: 0.9
+    FR_calf: -1.6
+    FR_hip: 0.0
+    FR_thigh: 0.9
+    RL_calf: -1.6
+    RL_hip: 0.0
+    RL_thigh: 0.9
+    RR_calf: -1.6
+    RR_hip: 0.0
+    RR_thigh: 0.9
+  description: EVA02 四足机器人
+  joints:
+    calf:
+      lower: -2.7227
+      upper: -0.83776
+    hip:
+      lower: -1.0472
+      upper: 1.0472
+    thigh:
+      lower: -1.5708
+      upper: 3.4907
+  legs:
+    calf_length: 0.25
+    hip_length: 0.1271
+    hip_offset_x: 0.2181
+    hip_offset_x_rear: -0.2206
+    hip_offset_y: 0.09179
+    thigh_length: 0.24
+  motors:
+    calf_effort: 60.0
+    hip_effort: 17.0
+    kd: 5.0
+    kp: 100.0
+    thigh_effort: 17.0
+  name: EVA02
+sensors:
+  foot_contact: true
+  imu: true
+  joint_states: true
