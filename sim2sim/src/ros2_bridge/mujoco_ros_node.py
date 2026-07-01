@@ -145,11 +145,11 @@ class Go2Simulator:
         # RL 动作缩放 (关键参数!)
         self._action_scale = action_scale
         
-        # 观测归一化缩放因子 (legged_gym/Unitree 标准)
+        # 观测归一化缩放因子 (放大指令信号)
         self._obs_scales = {
-            "ang_vel": 0.25,              # 基座角速度缩放
-            "dof_vel": 0.05,              # 关节速度缩放
-            "commands": [2.0, 2.0, 0.25], # 命令缩放: vx*2, vy*2, vyaw*0.25
+            "ang_vel": 0.1,              # 基座角速度缩放
+            "dof_vel": 0.02,             # 关节速度缩放
+            "commands": [3.0, 3.0, 1.0], # 命令缩放: vx*3, vy*3, vyaw*1 (增强响应)
         }
         self._clip_obs = 100.0  # 观测裁剪上限
         
@@ -314,7 +314,7 @@ class Go2Simulator:
             action = np.zeros(12)
         
         # tanh 激活 (Isaac Lab / rsl_rl 导出模型不含 tanh，需手动添加)
-        # action = np.tanh(action)  # 已禁用 - 训练时可能没用tanh
+        action = np.tanh(action)  # 启用 - 限制动作范围到 [-1, 1]
         
         # 动作 → 关节目标位置
         target_pos = self._default_dof_pos + action * self._action_scale
@@ -507,8 +507,8 @@ class MujocoRosNode(Node if HAS_ROS2 else object):
                 Float32MultiArray, "/foot_contacts", qos
             )
             
-            # 定时器: 50Hz 主循环
-            self._timer = self.create_timer(1.0 / 50.0, self._timer_callback)
+            # 定时器: 100Hz 主循环
+            self._timer = self.create_timer(1.0 / 100.0, self._timer_callback)
             
             self.get_logger().info("MuJoCo ROS Bridge 节点已启动")
         else:
@@ -550,7 +550,7 @@ class MujocoRosNode(Node if HAS_ROS2 else object):
         msg = JointState()
         msg.header = Header()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.name = Go2Simulator.DOF_NAMES
+        msg.name = self._sim.DOF_NAMES  # 修复：使用 _sim 而不是 sim
         msg.position = state["joint_pos"].tolist()
         msg.velocity = state["joint_vel"].tolist()
         self._joint_pub.publish(msg)
@@ -770,8 +770,7 @@ def run_ros2(xml_path: Optional[str] = None, rl_model_path: Optional[str] = None
 
 def main():
     parser = argparse.ArgumentParser(description="四足机器人 MuJoCo + ROS2 桥接")
-    parser.add_argument("--standalone", action="store_true",
-                        help="独立模式 (无 ROS2，键盘控制)")
+    # 移除 --standalone 参数
     parser.add_argument("--robot", type=str, default="go2",
                         help="机器人类型: go2, eva02 (默认: go2)")
     parser.add_argument("--xml", type=str, default=None,
@@ -794,10 +793,11 @@ def main():
             print(f"[INFO] 使用默认路径...")
             xml_path = None
 
-    if args.standalone or not HAS_ROS2:
-        run_standalone(xml_path, args.model, args.action_scale)
-    else:
-        run_ros2(xml_path, args.model, args.action_scale)
+    # 始终使用ROS2模式
+    if not HAS_ROS2:
+        raise RuntimeError("❌ ROS2未安装，无法运行。请安装ROS2或使用独立脚本。")
+
+    run_ros2(xml_path, args.model, args.action_scale)
 
 
 if __name__ == "__main__":

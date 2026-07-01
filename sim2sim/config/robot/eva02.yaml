@@ -13,16 +13,16 @@ robot:
     base_mass: 2.03
     mass: 12.621
   default_pose:
-    FL_calf: -1.6
+    FL_calf: -1.32
     FL_hip: 0.0
     FL_thigh: 0.9
-    FR_calf: -1.6
+    FR_calf: -1.32
     FR_hip: 0.0
     FR_thigh: 0.9
-    RL_calf: -1.6
+    RL_calf: -1.32
     RL_hip: 0.0
     RL_thigh: 0.9
-    RR_calf: -1.6
+    RR_calf: -1.32
     RR_hip: 0.0
     RR_thigh: 0.9
   description: EVA02 四足机器人
@@ -46,8 +46,8 @@ robot:
   motors:
     calf_effort: 60.0
     hip_effort: 17.0
-    kd: 5.0
-    kp: 100.0
+    kd: 10.0
+    kp: 500.0
     thigh_effort: 17.0
   name: EVA02
 sensors:
